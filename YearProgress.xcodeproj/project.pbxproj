@@ -1,0 +1,464 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AB10000000000000000000E1 /* YearProgressApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB10000000000000000000D2 /* YearProgressApp.swift */; };
+		AB10000000000000000000E2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB10000000000000000000D3 /* ContentView.swift */; };
+		AB10000000000000000000E3 /* YearProgressKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB10000000000000000000D1 /* YearProgressKit.swift */; };
+		AB10000000000000000000E4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB10000000000000000000D4 /* Assets.xcassets */; };
+		AB10000000000000000000E5 /* YearProgressWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB10000000000000000000D5 /* YearProgressWidgetBundle.swift */; };
+		AB10000000000000000000E6 /* YearProgressWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB10000000000000000000D6 /* YearProgressWidget.swift */; };
+		AB10000000000000000000E8 /* YearProgressKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB10000000000000000000D1 /* YearProgressKit.swift */; };
+		AB10000000000000000000E9 /* YearProgressWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AB10000000000000000000C2 /* YearProgressWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		AB10000000000000000000122 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AB10000000000000000000A1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AB10000000000000000000B2;
+			remoteInfo = YearProgressWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		AB10000000000000000000F4 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				AB10000000000000000000E9 /* YearProgressWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		AB10000000000000000000C1 /* YearProgress.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YearProgress.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB10000000000000000000C2 /* YearProgressWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = YearProgressWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB10000000000000000000D1 /* YearProgressKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearProgressKit.swift; sourceTree = "<group>"; };
+		AB10000000000000000000D2 /* YearProgressApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearProgressApp.swift; sourceTree = "<group>"; };
+		AB10000000000000000000D3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AB10000000000000000000D4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AB10000000000000000000D5 /* YearProgressWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearProgressWidgetBundle.swift; sourceTree = "<group>"; };
+		AB10000000000000000000D6 /* YearProgressWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearProgressWidget.swift; sourceTree = "<group>"; };
+		AB10000000000000000000D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AB10000000000000000000D9 /* YearProgress.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = YearProgress.entitlements; sourceTree = "<group>"; };
+		AB10000000000000000000DA /* YearProgressWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = YearProgressWidget.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AB10000000000000000000F2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AB10000000000000000000F6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AB10000000000000000000A2 = {
+			isa = PBXGroup;
+			children = (
+				AB10000000000000000000A4 /* Shared */,
+				AB10000000000000000000A5 /* YearProgress */,
+				AB10000000000000000000A6 /* YearProgressWidget */,
+				AB10000000000000000000A3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AB10000000000000000000A3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AB10000000000000000000C1 /* YearProgress.app */,
+				AB10000000000000000000C2 /* YearProgressWidgetExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AB10000000000000000000A4 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				AB10000000000000000000D1 /* YearProgressKit.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		AB10000000000000000000A5 /* YearProgress */ = {
+			isa = PBXGroup;
+			children = (
+				AB10000000000000000000D2 /* YearProgressApp.swift */,
+				AB10000000000000000000D3 /* ContentView.swift */,
+				AB10000000000000000000D4 /* Assets.xcassets */,
+				AB10000000000000000000D9 /* YearProgress.entitlements */,
+			);
+			path = YearProgress;
+			sourceTree = "<group>";
+		};
+		AB10000000000000000000A6 /* YearProgressWidget */ = {
+			isa = PBXGroup;
+			children = (
+				AB10000000000000000000D5 /* YearProgressWidgetBundle.swift */,
+				AB10000000000000000000D6 /* YearProgressWidget.swift */,
+				AB10000000000000000000D8 /* Info.plist */,
+				AB10000000000000000000DA /* YearProgressWidget.entitlements */,
+			);
+			path = YearProgressWidget;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AB10000000000000000000B1 /* YearProgress */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AB10000000000000000000102 /* Build configuration list for PBXNativeTarget "YearProgress" */;
+			buildPhases = (
+				AB10000000000000000000F1 /* Sources */,
+				AB10000000000000000000F2 /* Frameworks */,
+				AB10000000000000000000F3 /* Resources */,
+				AB10000000000000000000F4 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AB10000000000000000000121 /* PBXTargetDependency */,
+			);
+			name = YearProgress;
+			productName = YearProgress;
+			productReference = AB10000000000000000000C1 /* YearProgress.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AB10000000000000000000B2 /* YearProgressWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AB10000000000000000000103 /* Build configuration list for PBXNativeTarget "YearProgressWidgetExtension" */;
+			buildPhases = (
+				AB10000000000000000000F5 /* Sources */,
+				AB10000000000000000000F6 /* Frameworks */,
+				AB10000000000000000000F7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = YearProgressWidgetExtension;
+			productName = YearProgressWidgetExtension;
+			productReference = AB10000000000000000000C2 /* YearProgressWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AB10000000000000000000A1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					AB10000000000000000000B1 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					AB10000000000000000000B2 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = AB10000000000000000000101 /* Build configuration list for PBXProject "YearProgress" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AB10000000000000000000A2;
+			productRefGroup = AB10000000000000000000A3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AB10000000000000000000B1 /* YearProgress */,
+				AB10000000000000000000B2 /* YearProgressWidgetExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AB10000000000000000000F3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB10000000000000000000E4 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AB10000000000000000000F7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AB10000000000000000000F1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB10000000000000000000E2 /* ContentView.swift in Sources */,
+				AB10000000000000000000E1 /* YearProgressApp.swift in Sources */,
+				AB10000000000000000000E3 /* YearProgressKit.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AB10000000000000000000F5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB10000000000000000000E6 /* YearProgressWidget.swift in Sources */,
+				AB10000000000000000000E5 /* YearProgressWidgetBundle.swift in Sources */,
+				AB10000000000000000000E8 /* YearProgressKit.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AB10000000000000000000121 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AB10000000000000000000B2 /* YearProgressWidgetExtension */;
+			targetProxy = AB10000000000000000000122 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		AB10000000000000000000111 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AB10000000000000000000112 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		AB10000000000000000000113 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = YearProgress/YearProgress.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ensnif.YearProgress;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		AB10000000000000000000114 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = YearProgress/YearProgress.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ensnif.YearProgress;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		AB10000000000000000000115 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = YearProgressWidget/YearProgressWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = YearProgressWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "올해 진행률";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ensnif.YearProgress.YearProgressWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		AB10000000000000000000116 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = YearProgressWidget/YearProgressWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = YearProgressWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "올해 진행률";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ensnif.YearProgress.YearProgressWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AB10000000000000000000101 /* Build configuration list for PBXProject "YearProgress" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB10000000000000000000111 /* Debug */,
+				AB10000000000000000000112 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AB10000000000000000000102 /* Build configuration list for PBXNativeTarget "YearProgress" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB10000000000000000000113 /* Debug */,
+				AB10000000000000000000114 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AB10000000000000000000103 /* Build configuration list for PBXNativeTarget "YearProgressWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB10000000000000000000115 /* Debug */,
+				AB10000000000000000000116 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AB10000000000000000000A1 /* Project object */;
+}
