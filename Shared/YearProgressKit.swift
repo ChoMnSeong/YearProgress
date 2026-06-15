@@ -14,7 +14,7 @@ extension Color {
                      blue: Double(v & 0xFF) / 255)
     }
 
-    /// 색을 더 어둡게 (오늘 표시용)
+    /// 색을 더 어둡게 (라이트 모드 '오늘' 강조용)
     func darker(by amount: Double = 0.24) -> Color {
         guard let c = NSColor(self).usingColorSpace(.sRGB) else { return self }
         return Color(.sRGB,
@@ -24,13 +24,34 @@ extension Color {
                      opacity: Double(c.alphaComponent))
     }
 
-    /// Color → "#RRGGBB"
+    /// 색을 더 밝게 (다크 모드 '오늘' 강조용 — 어둡게 하면 검은 배경에 묻힘)
+    func lighter(by amount: Double = 0.35) -> Color {
+        guard let c = NSColor(self).usingColorSpace(.sRGB) else { return self }
+        func up(_ v: CGFloat) -> Double { Double(v) + (1 - Double(v)) * amount }
+        return Color(.sRGB,
+                     red: up(c.redComponent),
+                     green: up(c.greenComponent),
+                     blue: up(c.blueComponent),
+                     opacity: Double(c.alphaComponent))
+    }
+
+    /// 현재 모드에 맞는 '오늘' 강조색: 다크는 밝게, 라이트는 어둡게.
+    func emphasized(for scheme: ColorScheme) -> Color {
+        scheme == .dark ? lighter() : darker()
+    }
+
+    /// 대비 판단용 휘도(0~1).
+    var luminance: Double {
+        guard let c = NSColor(self).usingColorSpace(.sRGB) else { return 0 }
+        return 0.299 * Double(c.redComponent) + 0.587 * Double(c.greenComponent) + 0.114 * Double(c.blueComponent)
+    }
+
+    /// Color → "#RRGGBB" (extended sRGB 가 0~1 범위를 벗어날 수 있어 클램프)
     func toHexString() -> String? {
         guard let c = NSColor(self).usingColorSpace(.sRGB) else { return nil }
-        let r = Int((c.redComponent * 255).rounded())
-        let g = Int((c.greenComponent * 255).rounded())
-        let b = Int((c.blueComponent * 255).rounded())
-        return String(format: "#%02X%02X%02X", r, g, b)
+        func clamp(_ v: CGFloat) -> Int { Int((min(max(v, 0), 1) * 255).rounded()) }
+        return String(format: "#%02X%02X%02X",
+                      clamp(c.redComponent), clamp(c.greenComponent), clamp(c.blueComponent))
     }
 }
 
@@ -85,7 +106,7 @@ struct YearProgress {
 // MARK: - 기간(올해/이번 달/주/오늘/인생) 진행률
 
 enum Period: String, CaseIterable, Identifiable {
-    case year, month, week, day, life
+    case year, month, week, day, life, event
     var id: String { rawValue }
     var label: String {
         switch self {
@@ -94,6 +115,7 @@ enum Period: String, CaseIterable, Identifiable {
         case .week:  return L.t("이번 주", "Week")
         case .day:   return L.t("오늘", "Day")
         case .life:  return L.t("인생", "Life")
+        case .event: return L.t("이벤트", "Event")
         }
     }
 }
@@ -107,9 +129,12 @@ struct PeriodProgress {
     let title: String         // 헤더 라벨 ("2026년", "6월", "이번 주", "오늘", "35세")
     let remainingText: String // "212일 남음" 등
     let detail: String        // 상세 줄 ("153 / 365 · 212일 남음", 인생은 더 자세히)
+    let headline: String      // 메뉴 막대/헤더 큰 글자 (보통 "41.78%", 이벤트는 "D-23")
     let dotColumns: Int
     let year: Int             // 연 단위 시각화(월별 개요)용
     let dayOfYear: Int
+    let date: Date            // 기준(오늘) 시각 — 달력 채움 기준
+    let eventDate: Date?      // 이벤트 기간일 때 그 이벤트 날짜 (월 그리드 구간 계산용)
 
     var percent: Double { fraction * 100 }
     var formattedPercent: String { String(format: "%.2f%%", percent) }
@@ -118,6 +143,8 @@ struct PeriodProgress {
                         date: Date = Date(),
                         birthDate: Date? = nil,
                         lifeExpectancy: Int = 80,
+                        eventTitle: String? = nil,
+                        eventDate: Date? = nil,
                         calendar: Calendar = .current) -> PeriodProgress {
         let yp = YearProgress.current(date: date, calendar: calendar)
 
@@ -126,13 +153,17 @@ struct PeriodProgress {
             return span > 0 ? min(max(date.timeIntervalSince(start) / span, 0), 1) : 0
         }
         func build(fraction: Double, elapsed: Int, total: Int, title: String,
-                   remainingUnit: String, cols: Int, detail: String? = nil) -> PeriodProgress {
+                   remainingUnit: String, cols: Int,
+                   detail: String? = nil, headline: String? = nil, eventDate: Date? = nil) -> PeriodProgress {
             let rem = max(total - elapsed, 0)
             let remText = "\(rem)\(remainingUnit)"
+            let pct = String(format: "%.2f%%", fraction * 100)
             return PeriodProgress(period: period, fraction: fraction, elapsed: elapsed, total: total,
                                   remaining: rem, title: title, remainingText: remText,
                                   detail: detail ?? "\(elapsed) / \(total) · \(remText)",
-                                  dotColumns: cols, year: yp.year, dayOfYear: yp.dayOfYear)
+                                  headline: headline ?? pct,
+                                  dotColumns: cols, year: yp.year, dayOfYear: yp.dayOfYear,
+                                  date: date, eventDate: eventDate)
         }
 
         switch period {
@@ -153,11 +184,14 @@ struct PeriodProgress {
                          remainingUnit: L.t("일 남음", " days left"), cols: 7)
 
         case .week:
-            let interval = calendar.dateInterval(of: .weekOfYear, for: date)
+            // 시스템 설정과 무관하게 항상 월요일부터 시작하는 주로 계산합니다.
+            var weekCal = calendar
+            weekCal.firstWeekday = 2   // 1=일 … 2=월
+            let interval = weekCal.dateInterval(of: .weekOfYear, for: date)
             let start = interval?.start ?? date
             let end = interval?.end ?? date
-            let startOfDay = calendar.startOfDay(for: date)
-            let daysIn = (calendar.dateComponents([.day], from: start, to: startOfDay).day ?? 0) + 1
+            let startOfDay = weekCal.startOfDay(for: date)
+            let daysIn = (weekCal.dateComponents([.day], from: start, to: startOfDay).day ?? 0) + 1
             return build(fraction: clampFraction(start, end), elapsed: min(max(daysIn, 1), 7), total: 7,
                          title: L.t("이번 주", "This week"),
                          remainingUnit: L.t("일 남음", " days left"), cols: 7)
@@ -203,6 +237,36 @@ struct PeriodProgress {
                              "\(daysLived.formatted()) days lived · birthday in \(dToB)d")
             return build(fraction: f, elapsed: elapsed, total: exp, title: title,
                          remainingUnit: L.t("년 남음", "y left"), cols: 10, detail: detail)
+
+        case .event:
+            guard let ev = eventDate else {
+                return build(fraction: 0, elapsed: 0, total: 1,
+                             title: L.t("이벤트 미설정", "No event"),
+                             remainingUnit: "", cols: 10,
+                             detail: L.t("캘린더 이벤트를 선택하세요", "Pick a calendar event"),
+                             headline: "—")
+            }
+            let startToday = calendar.startOfDay(for: date)
+            let evDay = calendar.startOfDay(for: ev)
+            let daysUntil = calendar.dateComponents([.day], from: startToday, to: evDay).day ?? 0
+
+            let head: String
+            if daysUntil > 0 { head = "D-\(daysUntil)" }
+            else if daysUntil == 0 { head = L.t("D-DAY", "D-DAY") }
+            else { head = L.t("지남", "Past") }
+
+            let title = eventTitle ?? L.t("이벤트", "Event")
+            let detail = "\(head) · \(AppSettings.eventDetailFormatter.string(from: ev))"
+
+            // 작년 이벤트 "다음날" ~ 이벤트 날짜 (예: 2025-06-07 ~ 2026-06-06, 정확히 365일) 구간을 채웁니다.
+            let oneYearAgo = calendar.date(byAdding: .year, value: -1, to: ev) ?? ev
+            let startDate = calendar.date(byAdding: .day, value: 1, to: oneYearAgo) ?? oneYearAgo
+            let startDay = calendar.startOfDay(for: startDate)
+            let total = max((calendar.dateComponents([.day], from: startDay, to: evDay).day ?? 364) + 1, 1)
+            let elapsed = max(min((calendar.dateComponents([.day], from: startDay, to: startToday).day ?? 0) + 1, total), 0)
+            let frac = clampFraction(startDate, ev)
+            return build(fraction: frac, elapsed: elapsed, total: total, title: title,
+                         remainingUnit: "", cols: 19, detail: detail, headline: head, eventDate: ev)
         }
     }
 }
@@ -331,11 +395,21 @@ enum AppSettings {
     static let periodKey = "period"
     static let birthDateKey = "birthDate"           // "yyyy-MM-dd"
     static let lifeExpectancyKey = "lifeExpectancy" // 정수 문자열
+    static let eventTitleKey = "eventTitle"
+    static let eventDateKey = "eventDate"           // "yyyy-MM-dd"
 
     static let birthFormatter: DateFormatter = {
         let f = DateFormatter()
         f.locale = Locale(identifier: "en_US_POSIX")
         f.dateFormat = "yyyy-MM-dd"
+        return f
+    }()
+
+    /// 이벤트 상세("D-N · 토 6월 6일")용 — 매초 호출되는 경로라 캐싱 필수.
+    static let eventDetailFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = L.locale
+        f.setLocalizedDateFormatFromTemplate("EEE MMM d")
         return f
     }()
 
@@ -348,11 +422,15 @@ enum AppSettings {
         let period: Period
         let birthDate: Date?
         let lifeExpectancy: Int
+        let eventTitle: String?
+        let eventDate: Date?
     }
 
     static func snapshot() -> Snapshot {
         let d = SharedStore.read()
         let birth = (d[birthDateKey]).flatMap { $0.isEmpty ? nil : birthFormatter.date(from: $0) }
+        let evDate = (d[eventDateKey]).flatMap { $0.isEmpty ? nil : birthFormatter.date(from: $0) }
+        let evTitle = (d[eventTitleKey]).flatMap { $0.isEmpty ? nil : $0 }
         return Snapshot(
             accent: Color(hex: d[ThemeColor.storageKey] ?? "") ?? ThemeColor.blue.color,
             mode: DisplayMode(rawValue: d[displayModeKey] ?? "") ?? .dots,
@@ -360,13 +438,16 @@ enum AppSettings {
             selectedMonth: Int(d[selectedMonthKey] ?? "") ?? 0,
             period: Period(rawValue: d[periodKey] ?? "") ?? .year,
             birthDate: birth,
-            lifeExpectancy: Int(d[lifeExpectancyKey] ?? "") ?? 80
+            lifeExpectancy: Int(d[lifeExpectancyKey] ?? "") ?? 80,
+            eventTitle: evTitle,
+            eventDate: evDate
         )
     }
 
     /// 앱이 현재 설정을 위젯과 공유하기 위해 한 번에 기록 (selectedMonth 는 개요로 초기화)
     static func push(theme: String, displayMode: String, dotGrouping: String,
-                     period: String, birthDate: String, lifeExpectancy: String) {
+                     period: String, birthDate: String, lifeExpectancy: String,
+                     eventTitle: String, eventDate: String) {
         var d = SharedStore.read()
         d[ThemeColor.storageKey] = theme
         d[displayModeKey] = displayMode
@@ -374,6 +455,8 @@ enum AppSettings {
         d[periodKey] = period
         d[birthDateKey] = birthDate
         d[lifeExpectancyKey] = lifeExpectancy
+        d[eventTitleKey] = eventTitle
+        d[eventDateKey] = eventDate
         d[selectedMonthKey] = "0"
         SharedStore.write(d)
     }
@@ -387,11 +470,13 @@ struct DotGridView: View {
     let accent: Color
     var columns: Int = 19   // 0 = 자동(영역을 꽉 채우도록 열 수 계산)
     var spacing: CGFloat = 2
+    @Environment(\.colorScheme) private var scheme
 
     var body: some View {
         let past = accent
-        let today = accent.darker()
-        let future = accent.opacity(0.16)
+        let today = accent.emphasized(for: scheme)
+        // 다크 모드에선 어두운 배경 위라 미래 점을 조금 더 또렷하게.
+        let future = accent.opacity(scheme == .dark ? 0.30 : 0.16)
 
         Canvas(opaque: false) { ctx, size in
             let cols = columns > 0 ? columns
@@ -401,6 +486,7 @@ struct DotGridView: View {
             let dotH = (size.height - spacing * CGFloat(rows - 1)) / CGFloat(rows)
             let dot = max(min(dotW, dotH), 1)
             let radius = dot * 0.28
+            let corner = CGSize(width: radius, height: radius)
 
             // 그리드를 가운데 정렬해 남는 여백을 양쪽으로 분산
             let gridW = CGFloat(cols) * dot + CGFloat(cols - 1) * spacing
@@ -408,17 +494,22 @@ struct DotGridView: View {
             let ox = max((size.width - gridW) / 2, 0)
             let oy = max((size.height - gridH) / 2, 0)
 
+            // 점 365개를 색깔별 Path 3개로 모아 fill 3번에 끝냅니다(개별 fill 365번 대비 큰 절감).
+            var pastPath = Path(), todayPath = Path(), futurePath = Path()
             for i in 0..<totalDays {
                 let row = i / cols
                 let col = i % cols
                 let x = ox + CGFloat(col) * (dot + spacing)
                 let y = oy + CGFloat(row) * (dot + spacing)
                 let rect = CGRect(x: x, y: y, width: dot, height: dot)
-                let path = Path(roundedRect: rect, cornerRadius: radius)
                 let day = i + 1
-                let color: Color = (day == dayOfYear) ? today : (day < dayOfYear ? past : future)
-                ctx.fill(path, with: .color(color))
+                if day == dayOfYear { todayPath.addRoundedRect(in: rect, cornerSize: corner) }
+                else if day < dayOfYear { pastPath.addRoundedRect(in: rect, cornerSize: corner) }
+                else { futurePath.addRoundedRect(in: rect, cornerSize: corner) }
             }
+            ctx.fill(pastPath, with: .color(past))
+            ctx.fill(futurePath, with: .color(future))
+            ctx.fill(todayPath, with: .color(today))
         }
     }
 
@@ -440,14 +531,23 @@ struct DotGridView: View {
 
 /// 연/월 계산 헬퍼
 enum YearMath {
+    // 월 길이는 불변이라 연도별로 캐싱 (미니 달력 12개가 매 렌더마다 호출)
+    private static let lengthLock = NSLock()
+    private static var lengthCache: [Int: [Int]] = [:]
+
     static func monthLengths(year: Int) -> [Int] {
+        lengthLock.lock()
+        defer { lengthLock.unlock() }
+        if let cached = lengthCache[year] { return cached }
         var cal = Calendar(identifier: .gregorian)
         cal.locale = Locale(identifier: "en_US_POSIX")
-        return (1...12).map { m in
+        let lengths = (1...12).map { m -> Int in
             guard let d = cal.date(from: DateComponents(year: year, month: m, day: 1)),
                   let r = cal.range(of: .day, in: .month, for: d) else { return 30 }
             return r.count
         }
+        lengthCache[year] = lengths
+        return lengths
     }
     private static let shortSymbols = DateFormatter().shortStandaloneMonthSymbols ?? []
     private static let fullSymbols = DateFormatter().standaloneMonthSymbols ?? []
@@ -460,30 +560,68 @@ enum YearMath {
         if L.isKorean { return "\(m)월" }
         return fullSymbols.indices.contains(m - 1) ? fullSymbols[m - 1] : "\(m)"
     }
+
+    /// 그 달 1일이 들어갈 요일 칸(0부터). 달력처럼 1일을 제 요일 위치에 놓기 위함.
+    static func weekdayOffset(year: Int, month: Int) -> Int {
+        let c = Calendar.current
+        guard let first = c.date(from: DateComponents(year: year, month: month, day: 1)) else { return 0 }
+        let wd = c.component(.weekday, from: first)   // 1=일 … 7=토
+        return (wd - c.firstWeekday + 7) % 7
+    }
+
+    /// 주어진 날짜의 달로 끝나는 `count`개월의 (연,월) 목록.
+    static func monthsEndingAt(_ date: Date, count: Int) -> [MonthRef] {
+        let c = Calendar.current
+        guard let first = c.date(from: c.dateComponents([.year, .month], from: date)) else { return [] }
+        return (0..<count).compactMap { i in
+            let back = count - 1 - i
+            guard let d = c.date(byAdding: .month, value: -back, to: first) else { return nil }
+            let comp = c.dateComponents([.year, .month], from: d)
+            return MonthRef(year: comp.year ?? 0, month: comp.month ?? 1)
+        }
+    }
+}
+
+struct MonthRef: Identifiable {
+    let year: Int
+    let month: Int
+    var id: String { "\(year)-\(month)" }
+}
+
+extension PeriodProgress {
+    /// 월별 개요에 표시할 월 목록. 이벤트면 이벤트 달로 끝나는 12개월, 그 외엔 그 해 1~12월.
+    var monthRefs: [MonthRef] {
+        if period == .event, let ev = eventDate {
+            return YearMath.monthsEndingAt(ev, count: 12)
+        }
+        return (1...12).map { MonthRef(year: year, month: $0) }
+    }
 }
 
 /// 한 달을 7열 작은 점 격자로 표현 (개요용 미니 / 확대용 모두 dotSize 로 크기 조절)
 struct MiniMonthView: View {
     let month: Int
     let year: Int
-    let dayOfYear: Int
+    let today: Date
     let accent: Color
     var dotSize: CGFloat = 4
     var showsLabel: Bool = true
+    @Environment(\.colorScheme) private var scheme
 
     var body: some View {
         let lengths = YearMath.monthLengths(year: year)
         let days = lengths[month - 1]
-        let before = lengths.prefix(month - 1).reduce(0, +)
+        let tc = Calendar.current.dateComponents([.year, .month, .day], from: today)
         let cols = 7
-        let rows = Int(ceil(Double(days) / Double(cols)))
+        let offset = YearMath.weekdayOffset(year: year, month: month)   // 1일의 요일 칸
+        let rows = Int(ceil(Double(offset + days) / Double(cols)))
         let gap = max(dotSize * 0.22, 1)
         let labelFontSize = max(dotSize * 1.4, 7)
         let labelH = showsLabel ? labelFontSize + gap : 0
 
         let past = accent
-        let today = accent.darker()
-        let future = accent.opacity(0.18)
+        let todayColor = accent.emphasized(for: scheme)
+        let future = accent.opacity(scheme == .dark ? 0.32 : 0.18)
         let labelText = Text(YearMath.monthShort(month))
             .font(.system(size: labelFontSize, weight: .semibold))
             .foregroundStyle(.secondary)
@@ -496,16 +634,28 @@ struct MiniMonthView: View {
                 ctx.draw(ctx.resolve(labelText), at: CGPoint(x: 0, y: 0), anchor: .topLeading)
             }
             let r = dotSize * 0.3
+            let corner = CGSize(width: r, height: r)
+            // 색깔별 Path 로 모아 fill 3번에 그립니다.
+            var pastPath = Path(), todayPath = Path(), futurePath = Path()
             for i in 0..<days {
-                let row = i / cols
-                let col = i % cols
+                let gridIndex = offset + i   // 요일 위치만큼 밀어서 배치
+                let row = gridIndex / cols
+                let col = gridIndex % cols
                 let x = CGFloat(col) * (dotSize + gap)
                 let y = labelH + CGFloat(row) * (dotSize + gap)
-                let path = Path(roundedRect: CGRect(x: x, y: y, width: dotSize, height: dotSize), cornerRadius: r)
-                let absDay = before + i + 1
-                let color: Color = (absDay == dayOfYear) ? today : (absDay <= dayOfYear ? past : future)
-                ctx.fill(path, with: .color(color))
+                let rect = CGRect(x: x, y: y, width: dotSize, height: dotSize)
+                let d = i + 1
+                let isToday = (year == tc.year && month == tc.month && d == tc.day)
+                let filled = (year != tc.year!) ? (year < tc.year!)
+                    : (month != tc.month!) ? (month < tc.month!)
+                    : (d <= tc.day!)
+                if isToday { todayPath.addRoundedRect(in: rect, cornerSize: corner) }
+                else if filled { pastPath.addRoundedRect(in: rect, cornerSize: corner) }
+                else { futurePath.addRoundedRect(in: rect, cornerSize: corner) }
             }
+            ctx.fill(pastPath, with: .color(past))
+            ctx.fill(futurePath, with: .color(future))
+            ctx.fill(todayPath, with: .color(todayColor))
         }
         .frame(width: width, height: height, alignment: .topLeading)
     }
@@ -514,29 +664,29 @@ struct MiniMonthView: View {
 /// 12개월을 cols × rows 미니 달력으로 보여주는 개요. (위젯 비율에 맞춰 열/행 조정)
 /// 각 칸은 `cell` 클로저로 감싸 탭/인텐트를 붙입니다.
 struct MonthOverviewGrid<Cell: View>: View {
-    let year: Int
-    let dayOfYear: Int
+    let months: [MonthRef]   // 표시할 (연,월) 목록 (보통 12개)
+    let today: Date
     let accent: Color
     var cols: Int = 3
     var rows: Int = 4
     var spacing: CGFloat = 6
-    @ViewBuilder let cell: (Int, MiniMonthView) -> Cell
+    @ViewBuilder let cell: (Int, MiniMonthView) -> Cell   // (위치 1-based, mini)
 
     var body: some View {
         GeometryReader { geo in
             let cellW = (geo.size.width - spacing * CGFloat(cols - 1)) / CGFloat(cols)
             let cellH = (geo.size.height - spacing * CGFloat(rows - 1)) / CGFloat(rows)
-            // 미니 달력: 라벨 + 최대 5행(31일). 라벨/여백까지 고려해 세로 여유를 둠.
             let dot = max(min(cellW / 7.4, cellH / 8.6), 1)
 
             VStack(spacing: spacing) {
                 ForEach(0..<rows, id: \.self) { r in
                     HStack(spacing: spacing) {
                         ForEach(0..<cols, id: \.self) { c in
-                            let m = r * cols + c + 1
-                            if m <= 12 {
-                                cell(m, MiniMonthView(month: m, year: year, dayOfYear: dayOfYear,
-                                                      accent: accent, dotSize: dot))
+                            let idx = r * cols + c
+                            if idx < months.count {
+                                let mr = months[idx]
+                                cell(idx + 1, MiniMonthView(month: mr.month, year: mr.year,
+                                                            today: today, accent: accent, dotSize: dot))
                                     .frame(width: cellW, height: cellH, alignment: .top)
                             } else {
                                 Color.clear.frame(width: cellW, height: cellH)
@@ -554,16 +704,20 @@ struct MonthOverviewGrid<Cell: View>: View {
 struct SingleMonthView: View {
     let month: Int
     let year: Int
-    let dayOfYear: Int
+    let today: Date
     let accent: Color
     var spacing: CGFloat = 4
+    @Environment(\.colorScheme) private var scheme
 
     var body: some View {
         let lengths = YearMath.monthLengths(year: year)
         let days = lengths[month - 1]
-        let before = lengths.prefix(month - 1).reduce(0, +)
         let cols = 7
-        let rows = Int(ceil(Double(days) / Double(cols)))
+        let offset = YearMath.weekdayOffset(year: year, month: month)   // 1일의 요일 칸
+        let rows = Int(ceil(Double(offset + days) / Double(cols)))
+        let tc = Calendar.current.dateComponents([.year, .month, .day], from: today)
+        // 채워진 칸 글자색: 강조색이 밝으면 검정, 어두우면 흰색 (흰색 고정이면 밝은 색에서 안 보임)
+        let filledText: Color = accent.luminance > 0.62 ? Color.black.opacity(0.82) : .white
 
         GeometryReader { geo in
             // 셀이 영역(가로·세로)을 꽉 채우도록 직사각형으로 배치.
@@ -574,9 +728,9 @@ struct SingleMonthView: View {
                 ForEach(0..<rows, id: \.self) { r in
                     HStack(spacing: spacing) {
                         ForEach(0..<cols, id: \.self) { c in
-                            let d = r * cols + c + 1
-                            if d <= days {
-                                dayCell(day: d, absDay: before + d, w: cellW, h: cellH)
+                            let d = r * cols + c - offset + 1   // 요일 정렬
+                            if d >= 1 && d <= days {
+                                dayCell(day: d, tc: tc, w: cellW, h: cellH, filledText: filledText)
                             } else {
                                 Color.clear.frame(width: cellW, height: cellH)
                             }
@@ -588,18 +742,21 @@ struct SingleMonthView: View {
     }
 
     @ViewBuilder
-    private func dayCell(day: Int, absDay: Int, w: CGFloat, h: CGFloat) -> some View {
-        let filled = absDay <= dayOfYear
-        let isToday = absDay == dayOfYear
+    private func dayCell(day: Int, tc: DateComponents, w: CGFloat, h: CGFloat, filledText: Color) -> some View {
+        let isToday = (year == tc.year && month == tc.month && day == tc.day)
+        let filled = (year != tc.year!) ? (year < tc.year!)
+            : (month != tc.month!) ? (month < tc.month!)
+            : (day <= tc.day!)
         let s = min(w, h)
         ZStack {
             RoundedRectangle(cornerRadius: s * 0.28, style: .continuous)
-                .fill(filled ? accent : accent.opacity(0.15))
-                .brightness(isToday ? -0.24 : 0)
+                .fill(filled ? accent : accent.opacity(scheme == .dark ? 0.26 : 0.15))
+                // 오늘 강조: 다크는 밝게, 라이트는 어둡게 (어둡게 고정이면 검은 배경에 묻힘)
+                .brightness(isToday ? (scheme == .dark ? 0.18 : -0.24) : 0)
             Text("\(day)")
                 .font(.system(size: s * 0.46, weight: isToday ? .bold : .medium, design: .rounded))
                 .minimumScaleFactor(0.5)
-                .foregroundStyle(filled ? Color.white : accent.opacity(0.85))
+                .foregroundStyle(filled ? filledText : accent.opacity(0.85))
         }
         .frame(width: w, height: h)
     }

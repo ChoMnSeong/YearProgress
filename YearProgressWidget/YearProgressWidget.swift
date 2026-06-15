@@ -34,7 +34,8 @@ struct YearProgressProvider: TimelineProvider {
         YearProgressEntry(
             date: date,
             progress: PeriodProgress.current(period: s.period, date: date,
-                                             birthDate: s.birthDate, lifeExpectancy: s.lifeExpectancy),
+                                             birthDate: s.birthDate, lifeExpectancy: s.lifeExpectancy,
+                                             eventTitle: s.eventTitle, eventDate: s.eventDate),
             accent: s.accent,
             mode: s.mode,
             grouping: s.grouping,
@@ -43,7 +44,11 @@ struct YearProgressProvider: TimelineProvider {
     }
 
     func placeholder(in context: Context) -> YearProgressEntry {
-        makeEntry(date: Date(), AppSettings.snapshot())
+        // 갤러리/리덕션용 — 즉시 반환해야 하므로 디스크(설정 파일)를 읽지 않습니다.
+        YearProgressEntry(date: Date(),
+                          progress: PeriodProgress.current(period: .year),
+                          accent: Color(hex: ThemeColor.defaultHex) ?? .blue,
+                          mode: .dots, grouping: .continuous, selectedMonth: 0)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (YearProgressEntry) -> Void) {
@@ -53,12 +58,16 @@ struct YearProgressProvider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<YearProgressEntry>) -> Void) {
         // 설정은 타임라인당 한 번만 읽습니다.
         let snapshot = AppSettings.snapshot()
-        var entries: [YearProgressEntry] = []
         let calendar = Calendar.current
         let now = Date()
-        for hourOffset in 0..<24 {
-            if let date = calendar.date(byAdding: .hour, value: hourOffset, to: now) {
-                entries.append(makeEntry(date: date, snapshot))
+        // 지금 즉시 1개 + 이후 24개는 '정각'에 맞춰 — 시간 단위 표시(오늘 기간 등)가
+        // 정각에 바로 갱신되도록 합니다. (기존엔 임의 분 오프셋이라 최대 59분 늦게 갱신)
+        var entries = [makeEntry(date: now, snapshot)]
+        if let hourStart = calendar.dateInterval(of: .hour, for: now)?.start {
+            for hourOffset in 1...24 {
+                if let date = calendar.date(byAdding: .hour, value: hourOffset, to: hourStart) {
+                    entries.append(makeEntry(date: date, snapshot))
+                }
             }
         }
         completion(Timeline(entries: entries, policy: .atEnd))
@@ -146,8 +155,9 @@ struct YearProgressWidgetEntryView: View {
             HStack(alignment: .firstTextBaseline) {
                 Text(p.title)
                     .font(yearFont.weight(.bold))
+                    .lineLimit(1)
                 Spacer()
-                Text(p.formattedPercent)
+                Text(p.headline)
                     .font(pctFont.weight(.bold))
                     .monospacedDigit()
                     .foregroundStyle(accent)
@@ -165,21 +175,24 @@ struct YearProgressWidgetEntryView: View {
 
     @ViewBuilder
     private func dotsVisualization(columns: Int) -> some View {
-        // 월별 개요/확대는 "올해" 기간 + 월별 모드에서만. 그 외엔 단위 점 그리드.
-        if p.period == .year && entry.grouping == .monthly {
+        // 월별 개요/확대는 "올해"·"이벤트" 기간 + 월별 모드에서. 그 외엔 단위 점 그리드.
+        if (p.period == .year || p.period == .event) && entry.grouping == .monthly {
             monthlyView()
         } else {
-            let isYear = p.period == .year
+            // 이벤트도 1년(365점) 기준이라 올해처럼 다룹니다.
+            let yearLike = p.period == .year || p.period == .event
             DotGridView(dayOfYear: p.elapsed, totalDays: p.total, accent: accent,
-                        columns: isYear ? columns : 0,
-                        spacing: isYear ? 2 : 3)
+                        columns: yearLike ? columns : 0,
+                        spacing: yearLike ? 2 : 3)
         }
     }
 
     @ViewBuilder
     private func monthlyView() -> some View {
+        let refs = p.monthRefs
         Group {
-            if (1...12).contains(entry.selectedMonth) {
+            if entry.selectedMonth >= 1, entry.selectedMonth <= refs.count {
+                let ref = refs[entry.selectedMonth - 1]
                 VStack(spacing: 6) {
                     HStack(spacing: 6) {
                         Button(intent: SelectMonthIntent(month: 0)) {
@@ -191,19 +204,18 @@ struct YearProgressWidgetEntryView: View {
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
-                        Text(YearMath.monthName(entry.selectedMonth))
+                        Text(YearMath.monthName(ref.month))
                             .font(.headline)
                         Spacer()
                     }
-                    SingleMonthView(month: entry.selectedMonth, year: p.year, dayOfYear: p.dayOfYear,
-                                    accent: accent)
+                    SingleMonthView(month: ref.month, year: ref.year, today: entry.date, accent: accent)
                 }
             } else {
                 // 중간 위젯은 가로로 넓고 낮아 6열×2행, 그 외(작은/큰)는 3열×4행.
                 let wide = family == .systemMedium
-                MonthOverviewGrid(year: p.year, dayOfYear: p.dayOfYear, accent: accent,
-                                  cols: wide ? 6 : 3, rows: wide ? 2 : 4) { m, mini in
-                    Button(intent: SelectMonthIntent(month: m)) { mini }
+                MonthOverviewGrid(months: refs, today: entry.date, accent: accent,
+                                  cols: wide ? 6 : 3, rows: wide ? 2 : 4) { idx, mini in
+                    Button(intent: SelectMonthIntent(month: idx)) { mini }
                         .buttonStyle(.plain)
                 }
             }
