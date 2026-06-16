@@ -7,13 +7,40 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AB10000000000000000000E1 /* YearProgressApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB10000000000000000000D2 /* YearProgressApp.swift */; };
-		AB10000000000000000000E2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB10000000000000000000D3 /* ContentView.swift */; };
-		AB10000000000000000000E3 /* YearProgressKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB10000000000000000000D1 /* YearProgressKit.swift */; };
+		CA2000000000000000000023 /* YearProgressApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000012 /* YearProgressApp.swift */; };
+		CA2000000000000000000024 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000013 /* AppDelegate.swift */; };
+		CA2000000000000000000025 /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000014 /* MenuBarController.swift */; };
+		CA2000000000000000000026 /* MenuBarFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000015 /* MenuBarFormat.swift */; };
+		CA2000000000000000000027 /* PopoverContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000016 /* PopoverContent.swift */; };
+		CA2000000000000000000028 /* CalendarAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000017 /* CalendarAccess.swift */; };
+		CA2000000000000000000029 /* BirthDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000018 /* BirthDatePicker.swift */; };
+		CA2000000000000000000030 /* ColorControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000019 /* ColorControls.swift */; };
+		CA2000000000000000000031 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000020 /* ContentView.swift */; };
+		CA2000000000000000000032 /* YearProgressWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000021 /* YearProgressWidget.swift */; };
+		CA2000000000000000000033 /* YearProgressWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000022 /* YearProgressWidgetBundle.swift */; };
+		CA2000000000000000000034 /* Then.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000001 /* Then.swift */; };
+		CA2000000000000000000035 /* Then.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000001 /* Then.swift */; };
+		CA2000000000000000000036 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000002 /* Localization.swift */; };
+		CA2000000000000000000037 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000002 /* Localization.swift */; };
+		CA2000000000000000000038 /* Color+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000003 /* Color+Theme.swift */; };
+		CA2000000000000000000039 /* Color+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000003 /* Color+Theme.swift */; };
+		CA2000000000000000000040 /* YearMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000004 /* YearMath.swift */; };
+		CA2000000000000000000041 /* YearMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000004 /* YearMath.swift */; };
+		CA2000000000000000000042 /* ProgressModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000005 /* ProgressModel.swift */; };
+		CA2000000000000000000043 /* ProgressModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000005 /* ProgressModel.swift */; };
+		CA2000000000000000000044 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000006 /* SettingsStore.swift */; };
+		CA2000000000000000000045 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000006 /* SettingsStore.swift */; };
+		CA2000000000000000000046 /* DotGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000007 /* DotGridView.swift */; };
+		CA2000000000000000000047 /* DotGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000007 /* DotGridView.swift */; };
+		CA2000000000000000000048 /* MiniMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000008 /* MiniMonthView.swift */; };
+		CA2000000000000000000049 /* MiniMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000008 /* MiniMonthView.swift */; };
+		CA2000000000000000000050 /* MonthOverviewGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000009 /* MonthOverviewGrid.swift */; };
+		CA2000000000000000000051 /* MonthOverviewGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000009 /* MonthOverviewGrid.swift */; };
+		CA2000000000000000000052 /* RingGraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000010 /* RingGraphView.swift */; };
+		CA2000000000000000000053 /* RingGraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000010 /* RingGraphView.swift */; };
+		CA2000000000000000000054 /* SingleMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000011 /* SingleMonthView.swift */; };
+		CA2000000000000000000055 /* SingleMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000011 /* SingleMonthView.swift */; };
 		AB10000000000000000000E4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB10000000000000000000D4 /* Assets.xcassets */; };
-		AB10000000000000000000E5 /* YearProgressWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB10000000000000000000D5 /* YearProgressWidgetBundle.swift */; };
-		AB10000000000000000000E6 /* YearProgressWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB10000000000000000000D6 /* YearProgressWidget.swift */; };
-		AB10000000000000000000E8 /* YearProgressKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB10000000000000000000D1 /* YearProgressKit.swift */; };
 		AB10000000000000000000E9 /* YearProgressWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AB10000000000000000000C2 /* YearProgressWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -42,14 +69,31 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CA2000000000000000000001 /* Then.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Then.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000002 /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Localization.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000003 /* Color+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Theme.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000004 /* YearMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YearMath.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000005 /* ProgressModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProgressModel.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000006 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsStore.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000007 /* DotGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DotGridView.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000008 /* MiniMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MiniMonthView.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000009 /* MonthOverviewGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MonthOverviewGrid.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000010 /* RingGraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RingGraphView.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000011 /* SingleMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SingleMonthView.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000012 /* YearProgressApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YearProgressApp.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000013 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000014 /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MenuBarController.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000015 /* MenuBarFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MenuBarFormat.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000016 /* PopoverContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PopoverContent.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000017 /* CalendarAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CalendarAccess.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000018 /* BirthDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BirthDatePicker.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000019 /* ColorControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ColorControls.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000020 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000021 /* YearProgressWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YearProgressWidget.swift"; sourceTree = "<group>"; };
+		CA2000000000000000000022 /* YearProgressWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YearProgressWidgetBundle.swift"; sourceTree = "<group>"; };
 		AB10000000000000000000C1 /* YearProgress.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YearProgress.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB10000000000000000000C2 /* YearProgressWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = YearProgressWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		AB10000000000000000000D1 /* YearProgressKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearProgressKit.swift; sourceTree = "<group>"; };
-		AB10000000000000000000D2 /* YearProgressApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearProgressApp.swift; sourceTree = "<group>"; };
-		AB10000000000000000000D3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		AB10000000000000000000D4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		AB10000000000000000000D5 /* YearProgressWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearProgressWidgetBundle.swift; sourceTree = "<group>"; };
-		AB10000000000000000000D6 /* YearProgressWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearProgressWidget.swift; sourceTree = "<group>"; };
 		AB10000000000000000000D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AB10000000000000000000D9 /* YearProgress.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = YearProgress.entitlements; sourceTree = "<group>"; };
 		AB10000000000000000000DA /* YearProgressWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = YearProgressWidget.entitlements; sourceTree = "<group>"; };
@@ -95,7 +139,17 @@
 		AB10000000000000000000A4 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				AB10000000000000000000D1 /* YearProgressKit.swift */,
+				CA2000000000000000000001 /* Then.swift */,
+				CA2000000000000000000002 /* Localization.swift */,
+				CA2000000000000000000003 /* Color+Theme.swift */,
+				CA2000000000000000000004 /* YearMath.swift */,
+				CA2000000000000000000005 /* ProgressModel.swift */,
+				CA2000000000000000000006 /* SettingsStore.swift */,
+				CA2000000000000000000007 /* DotGridView.swift */,
+				CA2000000000000000000008 /* MiniMonthView.swift */,
+				CA2000000000000000000009 /* MonthOverviewGrid.swift */,
+				CA2000000000000000000010 /* RingGraphView.swift */,
+				CA2000000000000000000011 /* SingleMonthView.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -103,8 +157,15 @@
 		AB10000000000000000000A5 /* YearProgress */ = {
 			isa = PBXGroup;
 			children = (
-				AB10000000000000000000D2 /* YearProgressApp.swift */,
-				AB10000000000000000000D3 /* ContentView.swift */,
+				CA2000000000000000000012 /* YearProgressApp.swift */,
+				CA2000000000000000000013 /* AppDelegate.swift */,
+				CA2000000000000000000014 /* MenuBarController.swift */,
+				CA2000000000000000000015 /* MenuBarFormat.swift */,
+				CA2000000000000000000016 /* PopoverContent.swift */,
+				CA2000000000000000000017 /* CalendarAccess.swift */,
+				CA2000000000000000000018 /* BirthDatePicker.swift */,
+				CA2000000000000000000019 /* ColorControls.swift */,
+				CA2000000000000000000020 /* ContentView.swift */,
 				AB10000000000000000000D4 /* Assets.xcassets */,
 				AB10000000000000000000D9 /* YearProgress.entitlements */,
 			);
@@ -114,8 +175,8 @@
 		AB10000000000000000000A6 /* YearProgressWidget */ = {
 			isa = PBXGroup;
 			children = (
-				AB10000000000000000000D5 /* YearProgressWidgetBundle.swift */,
-				AB10000000000000000000D6 /* YearProgressWidget.swift */,
+				CA2000000000000000000021 /* YearProgressWidget.swift */,
+				CA2000000000000000000022 /* YearProgressWidgetBundle.swift */,
 				AB10000000000000000000D8 /* Info.plist */,
 				AB10000000000000000000DA /* YearProgressWidget.entitlements */,
 			);
@@ -221,9 +282,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB10000000000000000000E2 /* ContentView.swift in Sources */,
-				AB10000000000000000000E1 /* YearProgressApp.swift in Sources */,
-				AB10000000000000000000E3 /* YearProgressKit.swift in Sources */,
+				CA2000000000000000000023 /* YearProgressApp.swift in Sources */,
+				CA2000000000000000000024 /* AppDelegate.swift in Sources */,
+				CA2000000000000000000025 /* MenuBarController.swift in Sources */,
+				CA2000000000000000000026 /* MenuBarFormat.swift in Sources */,
+				CA2000000000000000000027 /* PopoverContent.swift in Sources */,
+				CA2000000000000000000028 /* CalendarAccess.swift in Sources */,
+				CA2000000000000000000029 /* BirthDatePicker.swift in Sources */,
+				CA2000000000000000000030 /* ColorControls.swift in Sources */,
+				CA2000000000000000000031 /* ContentView.swift in Sources */,
+				CA2000000000000000000034 /* Then.swift in Sources */,
+				CA2000000000000000000036 /* Localization.swift in Sources */,
+				CA2000000000000000000038 /* Color+Theme.swift in Sources */,
+				CA2000000000000000000040 /* YearMath.swift in Sources */,
+				CA2000000000000000000042 /* ProgressModel.swift in Sources */,
+				CA2000000000000000000044 /* SettingsStore.swift in Sources */,
+				CA2000000000000000000046 /* DotGridView.swift in Sources */,
+				CA2000000000000000000048 /* MiniMonthView.swift in Sources */,
+				CA2000000000000000000050 /* MonthOverviewGrid.swift in Sources */,
+				CA2000000000000000000052 /* RingGraphView.swift in Sources */,
+				CA2000000000000000000054 /* SingleMonthView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -231,9 +309,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB10000000000000000000E6 /* YearProgressWidget.swift in Sources */,
-				AB10000000000000000000E5 /* YearProgressWidgetBundle.swift in Sources */,
-				AB10000000000000000000E8 /* YearProgressKit.swift in Sources */,
+				CA2000000000000000000032 /* YearProgressWidget.swift in Sources */,
+				CA2000000000000000000033 /* YearProgressWidgetBundle.swift in Sources */,
+				CA2000000000000000000035 /* Then.swift in Sources */,
+				CA2000000000000000000037 /* Localization.swift in Sources */,
+				CA2000000000000000000039 /* Color+Theme.swift in Sources */,
+				CA2000000000000000000041 /* YearMath.swift in Sources */,
+				CA2000000000000000000043 /* ProgressModel.swift in Sources */,
+				CA2000000000000000000045 /* SettingsStore.swift in Sources */,
+				CA2000000000000000000047 /* DotGridView.swift in Sources */,
+				CA2000000000000000000049 /* MiniMonthView.swift in Sources */,
+				CA2000000000000000000051 /* MonthOverviewGrid.swift in Sources */,
+				CA2000000000000000000053 /* RingGraphView.swift in Sources */,
+				CA2000000000000000000055 /* SingleMonthView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
