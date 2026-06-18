@@ -29,11 +29,10 @@ struct PopoverContent: View {
     @State private var zoomMonth: Int? = nil
     @StateObject private var calendar = CalendarAccess()
 
+    // 컨트롤·바인딩에서 쓰는 파생값. (date 파싱은 currentInputs/ProgressInputs 로 일원화)
     private var period: Period { Period(rawValue: periodRaw) ?? .year }
     private var birthDate: Date? { birthDateStr.isEmpty ? nil : AppSettings.birthFormatter.date(from: birthDateStr) }
     private var lifeExpectancy: Int { Int(lifeExpStr) ?? 80 }
-    private var eventDate: Date? { eventDateStr.isEmpty ? nil : AppSettings.birthFormatter.date(from: eventDateStr) }
-    private var eventTitleValue: String? { eventTitleStr.isEmpty ? nil : eventTitleStr }
 
     private var birthBinding: Binding<Date> {
         Binding(
@@ -118,86 +117,105 @@ struct PopoverContent: View {
     }
 
     var body: some View {
-        TimelineView(.periodic(from: .now, by: 1)) { context in
-            let progress = PeriodProgress.current(period: period, date: context.date,
-                                                  birthDate: birthDate, lifeExpectancy: lifeExpectancy,
-                                                  eventTitle: eventTitleValue, eventDate: eventDate)
-
-            VStack(spacing: 12) {
-                HStack(alignment: .firstTextBaseline) {
-                    Text(progress.title)
-                        .font(.headline)
-                        .lineLimit(1)
-                    Spacer()
-                    Text(progress.headline)
-                        .font(.title3.weight(.bold))
-                        .monospacedDigit()
-                        .foregroundStyle(accent)
-                }
-
-                visualization(progress)
-
-                Text(progress.detail)
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-
-                Divider()
-
-                colorPicker
-
-                // 기간 선택 (올해 / 이번 달 / 이번 주 / 오늘 / 인생)
-                Picker(L.t("기간", "Period"), selection: $periodRaw) {
-                    ForEach(Period.allCases) { Text($0.label).tag($0.rawValue) }
-                }
-                .pickerStyle(.menu)
-                .onChange(of: periodRaw) { _, _ in resetMonthAndReload() }
-
-                // 인생: 생년월일 + 기대수명
-                if period == .life {
-                    BirthDatePicker(date: birthBinding)
-                    Stepper(L.t("기대수명 \(lifeExpectancy)세", "Life expectancy \(lifeExpectancy)"),
-                            value: lifeExpBinding, in: 1...120)
-                }
-
-                if period == .event {
-                    eventControls
-                }
-
-                Picker("", selection: $displayRaw) {
-                    ForEach(DisplayMode.allCases) { Text($0.label).tag($0.rawValue) }
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .onChange(of: displayRaw) { _, _ in resetMonthAndReload() }
-
-                // 365/월별 전환은 "올해"·"이벤트" + 점 모드에서
-                if displayMode == .dots && (period == .year || period == .event) {
-                    Picker("", selection: $groupingRaw) {
-                        ForEach(DotGrouping.allCases) { Text($0.label).tag($0.rawValue) }
-                    }
-                    .pickerStyle(.segmented)
-                    .labelsHidden()
-                    .onChange(of: groupingRaw) { _, _ in resetMonthAndReload() }
-                }
-
-                Toggle(L.t("메뉴 막대에 시간 표시", "Show time in menu bar"), isOn: $showTime)
-                    .toggleStyle(.checkbox)
-
-                Toggle(L.t("로그인 시 자동 실행", "Launch at login"), isOn: $launchAtLogin)
-                    .toggleStyle(.checkbox)
-                    .onChange(of: launchAtLogin) { _, newValue in
-                        setLaunchAtLogin(newValue)
-                    }
-
-                Button(L.t("앱 창 열기", "Open Window"), action: onOpenWindow)
-                Button(L.t("종료", "Quit"), action: onQuit)
+        // @AppStorage 문자열을 매초가 아니라 '여기서 한 번' 파싱(특히 날짜 DateFormatter).
+        let inputs = currentInputs
+        VStack(spacing: 12) {
+            // 시간에 따라 변하는 부분(시계·퍼센트·시각화)만 매초 타임라인 안에 둡니다.
+            TimelineView(.periodic(from: .now, by: 1)) { context in
+                progressSection(inputs.progress(at: context.date), accent: inputs.accent)
             }
-            .padding()
-            .frame(width: 260)
-            .tint(accent)
-            .task { if calendar.authorized { await calendar.loadUpcoming() } }
+
+            Divider()
+
+            // 설정 컨트롤은 date 와 무관 → 타임라인 밖에 둬서 매초 재평가되지 않게 합니다.
+            controlsSection
         }
+        .padding()
+        .frame(width: 260)
+        .tint(inputs.accent)
+        .task { if calendar.authorized { await calendar.loadUpcoming() } }
+    }
+
+    private var currentInputs: ProgressInputs {
+        ProgressInputs(themeHex: themeHex, periodRaw: periodRaw, birthDateStr: birthDateStr,
+                       lifeExpStr: lifeExpStr, eventTitleStr: eventTitleStr, eventDateStr: eventDateStr)
+    }
+
+    /// 매초 갱신되는 진행 표시(헤더 + 시각화 + 상세). 시간 의존부만 여기 모읍니다.
+    @ViewBuilder
+    private func progressSection(_ progress: PeriodProgress, accent: Color) -> some View {
+        VStack(spacing: 12) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(progress.title)
+                    .font(.headline)
+                    .lineLimit(1)
+                Spacer()
+                Text(progress.headline)
+                    .font(.title3.weight(.bold))
+                    .monospacedDigit()
+                    .foregroundStyle(accent)
+            }
+
+            visualization(progress)
+
+            Text(progress.detail)
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+    }
+
+    /// date 와 무관한 설정 컨트롤 모음 (타임라인 밖 = 매초 재평가 제외).
+    @ViewBuilder
+    private var controlsSection: some View {
+        colorPicker
+
+        // 기간 선택 (올해 / 이번 달 / 이번 주 / 오늘 / 인생)
+        Picker(L.t("기간", "Period"), selection: $periodRaw) {
+            ForEach(Period.allCases) { Text($0.label).tag($0.rawValue) }
+        }
+        .pickerStyle(.menu)
+        .onChange(of: periodRaw) { _, _ in resetMonthAndReload() }
+
+        // 인생: 생년월일 + 기대수명
+        if period == .life {
+            BirthDatePicker(date: birthBinding)
+            Stepper(L.t("기대수명 \(lifeExpectancy)세", "Life expectancy \(lifeExpectancy)"),
+                    value: lifeExpBinding, in: 1...120)
+        }
+
+        if period == .event {
+            eventControls
+        }
+
+        Picker("", selection: $displayRaw) {
+            ForEach(DisplayMode.allCases) { Text($0.label).tag($0.rawValue) }
+        }
+        .pickerStyle(.segmented)
+        .labelsHidden()
+        .onChange(of: displayRaw) { _, _ in resetMonthAndReload() }
+
+        // 365/월별 전환은 "올해"·"이벤트" + 점 모드에서
+        if displayMode == .dots && (period == .year || period == .event) {
+            Picker("", selection: $groupingRaw) {
+                ForEach(DotGrouping.allCases) { Text($0.label).tag($0.rawValue) }
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .onChange(of: groupingRaw) { _, _ in resetMonthAndReload() }
+        }
+
+        Toggle(L.t("메뉴 막대에 시간 표시", "Show time in menu bar"), isOn: $showTime)
+            .toggleStyle(.checkbox)
+
+        Toggle(L.t("로그인 시 자동 실행", "Launch at login"), isOn: $launchAtLogin)
+            .toggleStyle(.checkbox)
+            .onChange(of: launchAtLogin) { _, newValue in
+                setLaunchAtLogin(newValue)
+            }
+
+        Button(L.t("앱 창 열기", "Open Window"), action: onOpenWindow)
+        Button(L.t("종료", "Quit"), action: onQuit)
     }
 
     @ViewBuilder

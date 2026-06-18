@@ -14,21 +14,15 @@ struct ContentView: View {
     @AppStorage(AppSettings.eventDateKey)
     private var eventDateStr = ""
 
-    private var accent: Color { Color(hex: themeHex) ?? .blue }
-    private var period: Period { Period(rawValue: periodRaw) ?? .year }
-    private var birthDate: Date? { birthDateStr.isEmpty ? nil : AppSettings.birthFormatter.date(from: birthDateStr) }
-    private var lifeExpectancy: Int { Int(lifeExpStr) ?? 80 }
-    private var eventDate: Date? { eventDateStr.isEmpty ? nil : AppSettings.birthFormatter.date(from: eventDateStr) }
-    private var eventTitleValue: String? { eventTitleStr.isEmpty ? nil : eventTitleStr }
-
     var body: some View {
+        // @AppStorage 문자열을 매초가 아니라 '여기서 한 번' 파싱(특히 날짜 DateFormatter).
+        let inputs = ProgressInputs(themeHex: themeHex, periodRaw: periodRaw, birthDateStr: birthDateStr,
+                                    lifeExpStr: lifeExpStr, eventTitleStr: eventTitleStr, eventDateStr: eventDateStr)
         // 1초마다 화면을 갱신하여 시계와 진행률이 살아있도록 합니다.
         TimelineView(.periodic(from: .now, by: 1)) { context in
             YearProgressScreen(date: context.date,
-                               progress: PeriodProgress.current(period: period, date: context.date,
-                                                                birthDate: birthDate, lifeExpectancy: lifeExpectancy,
-                                                                eventTitle: eventTitleValue, eventDate: eventDate),
-                               accent: accent)
+                               progress: inputs.progress(at: context.date),
+                               accent: inputs.accent)
         }
     }
 }

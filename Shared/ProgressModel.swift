@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 /// 한 해의 진행 상황을 나타내는 모델. 앱과 위젯 익스텐션 양쪽에서 함께 사용합니다.
 struct YearProgress {
@@ -222,5 +223,32 @@ extension PeriodProgress {
             return YearMath.monthsEndingAt(ev, count: 12)
         }
         return (1...12).map { MonthRef(year: year, month: $0) }
+    }
+}
+
+/// @AppStorage 에 문자열로 저장된 설정을 **한 번만** 파싱해 담는 값 타입 모델.
+/// 뷰가 매초(TimelineView) 재평가될 때 hex·날짜(DateFormatter)를 반복 파싱하지 않도록,
+/// body 당 1회 생성해 `progress(at:)` 로 시점별 진행률만 계산합니다. (값 타입 → ARC 부하 없음)
+struct ProgressInputs: Equatable {
+    let accent: Color
+    let period: Period
+    let birthDate: Date?
+    let lifeExpectancy: Int
+    let eventTitle: String?
+    let eventDate: Date?
+
+    init(themeHex: String, periodRaw: String, birthDateStr: String,
+         lifeExpStr: String, eventTitleStr: String, eventDateStr: String) {
+        accent = Color(hex: themeHex) ?? .blue
+        period = Period(rawValue: periodRaw) ?? .year
+        birthDate = birthDateStr.isEmpty ? nil : AppSettings.birthFormatter.date(from: birthDateStr)
+        lifeExpectancy = Int(lifeExpStr) ?? 80
+        eventTitle = eventTitleStr.isEmpty ? nil : eventTitleStr
+        eventDate = eventDateStr.isEmpty ? nil : AppSettings.birthFormatter.date(from: eventDateStr)
+    }
+
+    func progress(at date: Date) -> PeriodProgress {
+        PeriodProgress.current(period: period, date: date, birthDate: birthDate,
+                               lifeExpectancy: lifeExpectancy, eventTitle: eventTitle, eventDate: eventDate)
     }
 }
